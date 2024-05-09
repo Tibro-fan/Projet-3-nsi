@@ -1,0 +1,24 @@
+#demineur
+
+import pygame
+from pygame.locals import *
+
+pygame.init()
+largeur = 400
+hauteur = 500
+taille_fenetre = (largeur , hauteur)
+
+screen = pygame.display.set_mode(taille_fenetre)
+
+font = pygame.image.load("ok.jpg")
+scale_font = pygame.transform.scale(font, taille_fenetre)
+
+game = True
+while game:
+	for event in pygame.event.get():
+		if event.type == QUIT:
+			game = False
+	screen.blit(scale_font, (0, 0))
+	pygame.display.flip()
+
+pygame.quit()
