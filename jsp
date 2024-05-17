@@ -39,7 +39,7 @@ def flag_sqr(ligne,col):
     pygame.draw.rect(screen, WHITE, (40+50*ligne, 130+50*col, 3, 40))
     pygame.draw.polygon(screen, RED, [(40+ligne*50 + 3, 130+col*50), (40+ligne*50 + 25, 130+col*50 + 10), (40+ligne*50 + 3, 130+col*50 + 20)])
 
-def one_sqr(num,ligne,col,color):
+def num_sqr(num,ligne,col,color):
     ligne-=1
     col-=1
     font_size = 50
@@ -58,7 +58,7 @@ while running:
 
     screen.fill(BLACK)
     grid()
-    one_sqr("2",1,1,RED)
+    num_sqr("2",1,1,RED)
 
     pygame.display.flip()
 
