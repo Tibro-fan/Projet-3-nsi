@@ -15,10 +15,10 @@ RED = (255, 0, 0)
 box = 9
 cellsize = (largeur-50) // box
 
-def sqr(screen,color,x,y,size,width):
+def sqr(color,x,y,size,width):
     pygame.draw.rect(screen,color,(x,y,size,size),width)
 
-def grid(largeur,hauteur,screen,color,width):
+def grid(color,width):
     for line in range(box):
         for col in range(box):
             rectangle=pygame.draw.rect(screen,color,((25+line*50),(125+col*50),cellsize,cellsize),width)
@@ -30,7 +30,7 @@ def bomb_sqr(ligne,col):
     ligne-=1
     col-=1
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
-    pygame.draw.circle(screen,RED, [50+50*ligne, 150+150*col], 15, 15)
+    pygame.draw.circle(screen,RED, [50+50*ligne, 150+50*col], 15, 15)
 
 def flag_sqr(ligne,col):
     ligne-=1
@@ -57,8 +57,8 @@ while running:
             running = False
 
     screen.fill(BLACK)
-    grid()
-    num_sqr("2",1,1,RED)
+    grid(WHITE,1)
+    bomb_sqr(6,9)
 
     pygame.display.flip()
 
