@@ -1,0 +1,68 @@
+import pygame
+import sys
+import random
+import math
+import pygame.locals
+pygame.font.init()
+pygame.init()
+
+largeur = 500
+hauteur = 600
+screen = pygame.display.set_mode((largeur, hauteur))
+pygame.display.set_caption("Game")
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (200, 200, 200)
+RED = (255, 0, 0)
+
+box = 9
+cellsize = (largeur-50) // box
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    instructions = [
+        "                               Bienvenue dans le jeu de Démineur!",
+        "                                               Règles du jeu:",
+        "Le but du jeu est de dévoiler toutes les cases du plateau sans toucher les",
+        "bombes, en plaçant des drapeaux sur les cases que l’on soupçonne d’être",
+        "des bombes. Lorsqu’on dévoile une case, le nombre de bombes dans un",
+        "périmètre de 8 cases autour est indiqué sur la case. Clic gauche pour",
+        "dévoiler une case, clic droit pour placer un drapeau.",
+        "Etapes :",
+        "       1.Trouver les bombes.",
+        "       2.Placer les drapeaux sur les bombes.",
+        "       3.Dévoiler toutes les cases du plateau sauf les bombes.",
+        "       4.Le nombre de bombes dans un périmètre de 8 cases",
+        "       est indiqué sur la case.",
+        "       5.Clique gauche pour dévoiler une caser.",
+        "       6.Clique droit pour mettre un drapeau"
+    ]
+
+    screen.fill(BLACK)
+    y_offset = 10
+    line_spacing = 25
+    for line in instructions:
+        text = font.render(line, True, WHITE)
+        screen.blit(text, (20, y_offset))
+        y_offset += 40
+
+
+    button_rect = pygame.Rect(largeur // 2 + 75, hauteur - 80, 150, 50)
+    pygame.draw.rect(screen, WHITE, button_rect)
+
+    mouse_pos = pygame.mouse.get_pos()
+    if button_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, RED, button_rect)
+
+    button_text = font.render("Commencer", True, WHITE)
+    button_text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, button_text_rect)
+
+    pygame.display.flip()
+
+# Fonction principale
