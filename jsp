@@ -99,13 +99,28 @@ def screen_grid(list):
 
 list=grid_list()
 
+image = pygame.image.load('logo_noir.png')
+image = pygame.transform.scale(image, (275, 125))
+image_rect = image.get_rect(center=(150, 60))
+
+def logo_sqr():
+    pygame.draw.rect(screen,WHITE,(25,15,250,95),1)
+
 running = True
 while running:      
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            xi,yi = pygame.mouse.get_pos()
+            #if a.collidepoint(xi,yi):
+                #action
+
+                
+    
     
     screen.fill(BLACK)
+    screen.blit(image, image_rect.topleft)
     flag_sqr(0,0)
     bomb_score()
     screen_grid(list)
