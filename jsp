@@ -68,27 +68,19 @@ def bomb_sqr(ligne,col):
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.circle(screen,RED, [50+50*ligne, 150+50*col], 15, 15)
 
-def flag_sqr(mouse_position):
+def flag_sqr(ligne,col):
     #LINE
-    pygame.draw.rect(screen,RED,((25+50*mouse_position[0]),(125+50*mouse_position[1]),cellsize,cellsize),1)
-    pygame.draw.rect(screen, WHITE, (40+50*mouse_position[0], 130+50*mouse_position[1], 3, 40))
-    pygame.draw.polygon(screen, RED, [(40+mouse_position[0]*50 + 3, 130+mouse_position[1]*50), (40+mouse_position[0]*50 + 25, 130+mouse_position[1]*50 + 10), (40+mouse_position[0]*50 + 3, 130+mouse_position[1]*50 + 20)])
+    pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen, WHITE, (40+50*ligne, 130+50*col, 3, 40))
+    pygame.draw.polygon(screen, RED, [(40+ligne*50 + 3, 130+col*50), (40+ligne*50 + 25, 130+col*50 + 10), (40+ligne*50 + 3, 130+col*50 + 20)])
 
-def num_sqr(mouse_position,color):
+def num_sqr(num,ligne,col,color):
     #LINE
-    num = 0
-    i = math.floor((mouse_position[0]-25)/50)
-    j = math.floor((mouse_position[1]-125)/50)
-    for k in range(3):
-        for l in range(3):
-            if list[j+l][i+k] == 'B':
-                num += 1
-    num = str(num)
     font_size = 50
     font = pygame.font.SysFont(None, font_size)
-    pygame.draw.rect(screen,WHITE,((25+50*mouse_position[0]),(125+50*mouse_position[1]),cellsize,cellsize),1)
+    pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     number_1 = font.render(num, True, color)
-    number_1_rect = number_1.get_rect(center=(50+50*mouse_position[0], 150+50*mouse_position[1]))
+    number_1_rect = number_1.get_rect(center=(50+50*ligne, 150+50*col))
     screen.blit(number_1,number_1_rect)
 
 def screen_grid(list):
@@ -129,12 +121,12 @@ while running:
                 print('Vous avez perdu !')
                 pygame.display.flip()
             else:
-                num_sqr(mouse_position,'\uabcd')
+                #num_sqr(num,mouse_position[0],mouse_position[1],WHITE)
                 pygame.display.flip()
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             mouse_position = pygame.mouse.get_pos()
-            flag_sqr(mouse_position)
+            flag_sqr(mouse_position[0],mouse_position[1])
             pygame.display.flip()
 
                 
@@ -142,7 +134,7 @@ while running:
     
     screen.fill(BLACK)
     screen.blit(image, image_rect.topleft)
-    flag_sqr((0,0))
+    flag_sqr(0,0)
     bomb_score()
     screen_grid(list)
 
