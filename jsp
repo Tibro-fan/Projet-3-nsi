@@ -83,6 +83,7 @@ def num_sqr(mouse_position,color):
         for l in range(3):
             if list[j+l][i+k] == 'B':
                 num += 1
+    num = str(num)
     font_size = 50
     font = pygame.font.SysFont(None, font_size)
     pygame.draw.rect(screen,WHITE,((25+50*mouse_position[0]),(125+50*mouse_position[1]),cellsize,cellsize),1)
