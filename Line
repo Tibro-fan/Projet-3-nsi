@@ -103,8 +103,23 @@ def screen_grid(list):
                 else:
                     num_sqr(str(t),line,row,WHITE) 
 
-#list=grid_list()
+def score(list):
+    #LINE
+    score=0
+    for line in range(len(list)):
+        for row in range(len(list)):
+            if list[row][line]=='B':
+                score+=1
+    pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
+    font_size = 90
+    font = pygame.font.SysFont(None, font_size)
+    scr = font.render(str(score), True, (171, 247, 186))
+    scr_rect = scr.get_rect(center=(389,65))
+    screen.blit(scr,scr_rect)
 
+
+#list=grid_list()
+list = grid_list()
 image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center=(150, 60))
@@ -125,7 +140,8 @@ while running:
     screen.fill(BLACK)
     screen.blit(image, image_rect.topleft)
     bomb_score()
-    screen_grid(grid_list_)
+    score(list)
+    screen_grid(list)
 
 
     pygame.display.flip()
