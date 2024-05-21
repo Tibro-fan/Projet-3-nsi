@@ -27,9 +27,20 @@ grid_list_=[
  [1,1,0,1,2,'B',2,1,0],
  [0,0,0,1,'B',2,0,0,0]]
 
+vide=[
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
 def sqr(ligne,col,color):
     #LINE
     pygame.draw.rect(screen,color,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen,BLACK,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
 
 def grid():
     #LINE
@@ -135,13 +146,13 @@ while running:
                 #action
 
                 
-    
-    
     screen.fill(BLACK)
     screen.blit(image, image_rect.topleft)
     bomb_score()
     score(list)
     screen_grid(list)
+    
+    screen_grid(vide)
 
 
     pygame.display.flip()
