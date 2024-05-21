@@ -18,7 +18,7 @@ cellsize = (largeur-50) // box
 
 grid_list_=[
  [0,0,0,0,0,0,0,1,1],
- [1,1,0,0,0,0,1,2,'B'],
+ [1,1,0,0,0,0,1,2,0],
  ['B',2,0,0,0,0,2,'B',3],
  ['B',2,0,0,0,0,2,'B',2],
  [1,2,1,0,0,0,1,1,1],
@@ -74,10 +74,6 @@ def grid_list():
             if list[i-1][]
           """  
     return list
-
-def bomb_score():
-    #LINE
-    pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
 
 def bomb_sqr(ligne,col):
     #LINE
@@ -148,11 +144,10 @@ while running:
                 
     screen.fill(BLACK)
     screen.blit(image, image_rect.topleft)
-    bomb_score()
     score(list)
-    screen_grid(list)
-    
-    screen_grid(vide)
+    screen_grid(grid_list_)
+
+    #screen_grid(vide)
 
 
     pygame.display.flip()
