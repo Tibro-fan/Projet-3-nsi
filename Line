@@ -1,7 +1,9 @@
 import pygame
 import sys
 import random
+import math
 pygame.init()
+
 
 largeur = 500
 hauteur = 600
@@ -12,13 +14,14 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
 RED = (255, 0, 0)
+GR = (74, 74, 74)
 
 box = 9
 cellsize = (largeur-50) // box
 
 grid_list_=[
  [0,0,0,0,0,0,0,1,1],
- [1,1,0,0,0,0,1,2,0],
+ [1,1,0,0,0,0,1,2,'B'],
  ['B',2,0,0,0,0,2,'B',3],
  ['B',2,0,0,0,0,2,'B',2],
  [1,2,1,0,0,0,1,1,1],
@@ -39,8 +42,8 @@ vide=[
 [0,0,0,0,0,0,0,0,0]]
 def sqr(ligne,col,color):
     #LINE
-    pygame.draw.rect(screen,color,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
-    pygame.draw.rect(screen,BLACK,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
+    pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen,color,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
 
 def grid():
     #LINE
@@ -49,7 +52,7 @@ def grid():
             rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
 
 def grid_list():
-    list=[
+    list1=[
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -64,16 +67,30 @@ def grid_list():
         reccur=0
         ln=random.randint(0,8)
         rw=random.randint(0,8)
-        list[rw][ln]='B'
-        for j in range(len(list)):
-            reccur+=list[j].count('B')
-   
-    """compt=0
-    for i in range(len(list)):
-        for k in range(len(list)):
-            if list[i-1][]
-          """  
-    return list
+        list1[rw][ln]='B'
+        for j in range(len(list1)):
+            reccur+=list1[j].count('B')
+    for i in range(len(list1)):
+        list1[i].insert(0,0)
+        list1[i].append(0)
+    list1.insert(0,[0,0,0,0,0,0,0,0,0,0,0])
+    list1.append([0,0,0,0,0,0,0,0,0,0,0])
+    for x in range(1,len(list1)-1):
+        for y in range(1,len(list1)-2):
+            if list1[y][x] != 'B':
+                num = 0
+                for k in range(3):
+                    for l in range(3):
+                        if list1[y-1+l][x-1+k] == 'B':
+                            num += 1
+                list1[y][x] = num
+    for a in range(len(list1)):
+        list1[a].pop(10)
+        list1[a].pop(0)
+    list1.pop(10)
+    list1.pop(0)
+    return list1
+
 
 def bomb_sqr(ligne,col):
     #LINE
@@ -95,27 +112,27 @@ def num_sqr(num,ligne,col,color):
     number_1_rect = number_1.get_rect(center=(50+50*ligne, 150+50*col))
     screen.blit(number_1,number_1_rect)
 
-def screen_grid(list):
+def screen_grid(list1,color):
     #LINE
     num=[1,2,3,4,5,6,7,8]
     for line in range(9):
         for row in range(9):
-            t=list[row][line]
+            t=list1[row][line]
             for i in range(len(num)):
                 if t not in num:
                     if t==0:
-                        sqr(line,row,WHITE)
+                        sqr(line,row,color)
                     elif t=='B':
                         bomb_sqr(line,row) 
                 else:
                     num_sqr(str(t),line,row,WHITE) 
 
-def score(list):
+def score(list1):
     #LINE
     score=0
-    for line in range(len(list)):
-        for row in range(len(list)):
-            if list[row][line]=='B':
+    for line in range(len(list1)):
+        for row in range(len(list1)):
+            if list1[row][line]=='B':
                 score+=1
     pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
     font_size = 90
@@ -125,8 +142,7 @@ def score(list):
     screen.blit(scr,scr_rect)
 
 
-#list=grid_list()
-list = grid_list()
+list1 = grid_list()
 image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center=(150, 60))
@@ -136,18 +152,32 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         elif event.type == pygame.MOUSEBUTTONDOWN:
             xi,yi = pygame.mouse.get_pos()
             #if a.collidepoint(xi,yi):
                 #action
 
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_position = pygame.mouse.get_pos()
+            if list1 == 'B':
+                print(list1)
+                print('Vous avez perdu !')
+                pygame.display.flip()
+            else:
+                vide[y][x]
+                pygame.display.flip()
+
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            mouse_position = pygame.mouse.get_pos()
+            flag_sqr(mouse_position[0],mouse_position[1])
+            pygame.display.flip()
                 
     screen.fill(BLACK)
     screen.blit(image, image_rect.topleft)
-    score(list)
-    screen_grid(grid_list_)
-
-    #screen_grid(vide)
+    score(list1)
+    screen_grid(list1,BLACK)
+    #screen_grid(vide,GR)
 
 
     pygame.display.flip()
