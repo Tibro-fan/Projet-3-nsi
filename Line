@@ -210,8 +210,7 @@ while running:
         screen.fill(BLACK)
         screen.blit(image, image_rect.topleft)
         score(vide) 
-        #screen_grid(vide,GR)
-        screen_grid(list1,BLACK)
+        screen_grid(vide,GR)
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -240,20 +239,24 @@ while running:
                                 for j in range(3):
                                     if vide[col-1+i][line-1+j] == 0:
                                         vide[col-i][line-j]='O'
-                            if vide[line-1][col] == 0:
-                                vide[line-1][col]='O'
-                            if vide[line][col-1]==0:
-                                vide[line][col-1]='O'
-                            if vide[line+1][col]==0:
-                                vide[line+1][col]=='O'
                             '''
+                            for i in range(3):
+                                if vide[line-1+i][col] == 0:
+                                    vide[line-1+i][col] = 'O'
+                                if vide[line][col-1+i] == 0:
+                                    vide[line][col-1+i] = 'O'
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
                 for col in range(9):
                     case=case_n(col,line)
                     if case.collidepoint(xi,yi):
-                        vide[line][col]='F'
+                        if vide[line][col]==0:
+                            vide[line][col]='F'
+                        elif vide[line][col]=='F':
+                            vide[line][col]=0
+                    
+
 
     pygame.display.flip()
 
