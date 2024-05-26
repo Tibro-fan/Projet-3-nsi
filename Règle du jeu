@@ -42,6 +42,14 @@ grid_list=[
  [1,1,0,1,2,'B',2,1,0],
  [0,0,0,1,'B',2,0,0,0]]
 
+
+def page_du_jeu():
+    largeur = 500
+    hauteur = 600
+    screen = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption("Game")
+
+
 def sqr(ligne,col,color):
     #LINE
     pygame.draw.rect(screen,color,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
