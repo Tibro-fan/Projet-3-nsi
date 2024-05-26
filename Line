@@ -52,6 +52,7 @@ def grid():
             rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
 
 def grid_list():
+    #LINE ET NINA
     list1=[
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -91,7 +92,6 @@ def grid_list():
     list1.pop(0)
     return list1
 
-
 def bomb_sqr(ligne,col):
     #LINE
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
@@ -120,20 +120,24 @@ def screen_grid(list1,color):
             t=list1[row][line]
             for i in range(len(num)):
                 if t not in num:
-                    if t==0:
+                    if t==0: 
                         sqr(line,row,color)
+                    if t=='O':
+                        sqr(line,row,BLACK)
                     elif t=='B':
-                        bomb_sqr(line,row) 
+                        bomb_sqr(line,row)
+                    elif t=='F' :
+                        flag_sqr(line,row)
                 else:
                     num_sqr(str(t),line,row,WHITE) 
 
 def score(list1):
     #LINE
-    score=0
+    score=10
     for line in range(len(list1)):
         for row in range(len(list1)):
-            if list1[row][line]=='B':
-                score+=1
+            if list1[row][line]=='F':
+                score-=1
     pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
     font_size = 90
     font = pygame.font.SysFont(None, font_size)
@@ -147,39 +151,67 @@ image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center=(150, 60))
 
-running = True
-while running:      
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+def case_n(lgn,cl):
+    case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
+    return case
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            xi,yi = pygame.mouse.get_pos()
-            #if a.collidepoint(xi,yi):
-                #action
+def end_game(bombes):
+    #NINA
+    ch = 'Vous avez fini le jeu', 
+    'avec',bombes,'bombes.'
+    larg = 500
+    haut = 200
+    screen_end = pygame.display.set_mode((larg, haut))
+    pygame.display.set_caption('Fin du Jeu')
 
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            mouse_position = pygame.mouse.get_pos()
-            if list1 == 'B':
-                print(list1)
-                print('Vous avez perdu !')
-                pygame.display.flip()
-            else:
-                vide[y][x]
-                pygame.display.flip()
+    ch=str(ch)
+    fin_jeu = True
+    while fin_jeu:
+        for event in pygame.event.get():
+            screen_end.fill(BLACK)
+            font_size = 50
+            font = pygame.font.SysFont(None, font_size)
+            fin = font.render(ch, True, WHITE)
+            rect = fin.get_rect(center=(250,50))
+            screen.blit(fin,rect)
+            if event.type == pygame.QUIT:
+                fin_jeu = False
 
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-            mouse_position = pygame.mouse.get_pos()
-            flag_sqr(mouse_position[0],mouse_position[1])
-            pygame.display.flip()
-                
-    screen.fill(BLACK)
-    screen.blit(image, image_rect.topleft)
-    score(list1)
-    screen_grid(list1,BLACK)
-    #screen_grid(vide,GR)
+        pygame.display.flip()
 
+def game():
+    #LINE ET NINA
+    running = True
+    while running:      
+        for event in pygame.event.get():
+            screen.fill(BLACK)
+            screen.blit(image, image_rect.topleft)
+            score(vide)
+            screen_grid(vide,GR)
+            
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                xi,yi = pygame.mouse.get_pos()
+                for line in range(9):
+                    for col in range(9):
+                        case=case_n(col,line)
+                        if case.collidepoint(xi,yi):
+                            vide[line][col]=list1[line][col]
+                            if vide[line][col]=='B':
+                                running=False
+                            elif vide[line][col]==0:
+                                vide[line][col]='O'
 
-    pygame.display.flip()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                xi,yi = pygame.mouse.get_pos()
+                for line in range(9):
+                    for col in range(9):
+                        case=case_n(col,line)
+                        if case.collidepoint(xi,yi):
+                            vide[line][col]='F'
 
-pygame.quit()
+        pygame.display.flip()
+
+game()
+end_game(1)
