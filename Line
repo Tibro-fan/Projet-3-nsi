@@ -227,10 +227,11 @@ while running:
                                 list1 = grid_list()
                                 vide = list2
                         '''
+
                         vide[line][col]=list1[line][col]
                         if vide[line][col]=='B':
                             running=False
-                        
+                            #screen.fill(BLACK)
 
                         elif vide[line][col]==0:
                             vide[line][col]='O'
@@ -240,11 +241,7 @@ while running:
                                     if vide[col-1+i][line-1+j] == 0:
                                         vide[col-i][line-j]='O'
                             '''
-                            for i in range(3):
-                                if vide[line-1+i][col] == 0:
-                                    vide[line-1+i][col] = 'O'
-                                if vide[line][col-1+i] == 0:
-                                    vide[line][col-1+i] = 'O'
+        
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
@@ -257,9 +254,8 @@ while running:
                             vide[line][col]=0
                     
 
-
     pygame.display.flip()
 
-#end_game(1)
+end_game(1)
 
 pygame.quit()
