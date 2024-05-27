@@ -2,36 +2,41 @@ import pygame
 import sys
 import random
 import math
-import pygame.locals
-
 pygame.init()
 
-largeur = 700
-hauteur = 700
-screen = pygame.display.set_mode((largeur, hauteur))  #defini  la taille de l'ecran
-pygame.display.set_caption("Règle du Jeu") #défini la page "regle du jeu"
 
-
-#Définitions des couleurs
+# Constants
+LARGEUR = 700
+HAUTEUR = 700
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
 RED = (255, 0, 0)
-BLUE = (0,0,255)
-
-
-#Variable de jeu
-JEU_ACITF = 1 ;  #Si =1, alors le jeu est acitf
-
-font = pygame.font.Font(None, 25)
-
-
+GR = (74, 74, 74)
+BLUE = (0, 0, 255)
 box = 9
-cellsize = (largeur-50) // box
+cellsize = (LARGEUR - 50) // box
 font = pygame.font.Font(None, 25)
 
+#Bouton constante
+smallfont = pygame.font.SysFont('Corbel', 25)
+text = smallfont.render('Continuer', True, GRAY)
+button_x = (700 - 200) // 2
+button_y = 650
+button_width = 200
+button_height = 30
 
-grid_list=[
+
+screen = pygame.display.set_mode((LARGEUR, HAUTEUR))
+pygame.display.set_caption("Règle du Jeu")
+
+def page_du_jeu():
+    largeur = 500
+    hauteur = 600
+    screen = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption("Game")
+
+grid_list_=[
  [0,0,0,0,0,0,0,1,1],
  [1,1,0,0,0,0,1,2,'B'],
  ['B',2,0,0,0,0,2,'B',3],
@@ -42,17 +47,20 @@ grid_list=[
  [1,1,0,1,2,'B',2,1,0],
  [0,0,0,1,'B',2,0,0,0]]
 
-
-def page_du_jeu():
-    largeur = 500
-    hauteur = 600
-    screen = pygame.display.set_mode((largeur, hauteur))
-    pygame.display.set_caption("Game")
-
-
+vide=[
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
 def sqr(ligne,col,color):
     #LINE
-    pygame.draw.rect(screen,color,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen,color,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
 
 def grid():
     #LINE
@@ -61,7 +69,8 @@ def grid():
             rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
 
 def grid_list():
-    list=[
+    #LINE ET NINA
+    list1=[
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -76,14 +85,29 @@ def grid_list():
         reccur=0
         ln=random.randint(0,8)
         rw=random.randint(0,8)
-        list[rw][ln]='B'
-        for j in range(len(list)):
-            reccur+=list[j].count('B')
-    return list
-
-def bomb_score():
-    #LINE
-    pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
+        list1[rw][ln]='B'
+        for j in range(len(list1)):
+            reccur+=list1[j].count('B')
+    for i in range(len(list1)):
+        list1[i].insert(0,0)
+        list1[i].append(0)
+    list1.insert(0,[0,0,0,0,0,0,0,0,0,0,0])
+    list1.append([0,0,0,0,0,0,0,0,0,0,0])
+    for x in range(1,len(list1)-1):
+        for y in range(1,len(list1)-1):
+            if list1[y][x] != 'B':
+                num = 0
+                for k in range(3):
+                    for l in range(3):
+                        if list1[y-1+l][x-1+k] == 'B':
+                            num += 1
+                list1[y][x] = num
+    for a in range(len(list1)):
+        list1[a].pop(10)
+        list1[a].pop(0)
+    list1.pop(10)
+    list1.pop(0)
+    return list1
 
 def bomb_sqr(ligne,col):
     #LINE
@@ -105,28 +129,68 @@ def num_sqr(num,ligne,col,color):
     number_1_rect = number_1.get_rect(center=(50+50*ligne, 150+50*col))
     screen.blit(number_1,number_1_rect)
 
-def screen_grid(list):
+def screen_grid(list1,color):
     #LINE
     num=[1,2,3,4,5,6,7,8]
     for line in range(9):
         for row in range(9):
-            t=list[row][line]
+            t=list1[row][line]
             for i in range(len(num)):
                 if t not in num:
                     if t==0:
-                        sqr(line,row,WHITE)
+                        sqr(line,row,color)
+                    if t=='O':
+                        sqr(line,row,BLACK)
                     elif t=='B':
                         bomb_sqr(line,row)
+                    elif t=='F' :
+                        flag_sqr(line,row)
                 else:
                     num_sqr(str(t),line,row,WHITE)
 
-list = grid_list()
+def score(list1):
+    #LINE
+    score=10
+    for line in range(len(list1)):
+        for row in range(len(list1)):
+            if list1[row][line]=='F':
+                score-=1
+    pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
+    font_size = 90
+    font = pygame.font.SysFont(None, font_size)
+    scr = font.render(str(score), True, (171, 247, 186))
+    scr_rect = scr.get_rect(center=(389,65))
+    screen.blit(scr,scr_rect)
 
 
 
-def logo_sqr():
-    pygame.draw.rect(screen,WHITE,(25,15,250,95),1)
+def case_n(lgn,cl):
+    case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
+    return case
 
+def end_game(bombes):
+    #NINA
+    ch = 'Vous avez fini le jeu',
+    'avec',bombes,'bombes.'
+    larg = 500
+    haut = 200
+    screen_end = pygame.display.set_mode((larg, haut))
+    pygame.display.set_caption('Fin du Jeu')
+
+    ch=str(ch)
+    fin_jeu = True
+    while fin_jeu:
+        for event in pygame.event.get():
+            screen_end.fill(BLACK)
+            font_size = 50
+            font = pygame.font.SysFont(None, font_size)
+            fin = font.render(ch, True, WHITE)
+            rect = fin.get_rect(center=(250,50))
+            screen.blit(fin,rect)
+            if event.type == pygame.QUIT:
+                fin_jeu = False
+
+        pygame.display.flip()
 
 def show_instructions():
     instructions = [
@@ -153,47 +217,108 @@ def show_instructions():
         screen.blit(text, (20, y_offset))
         y_offset += 40
 
+#LINE ET NINA
+list1 = grid_list()
+vide=[
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
 
-smallfont = pygame.font.SysFont('Corbel', 25)
-text = smallfont.render('Continuer', True, GRAY)
-button_x = (700 - 200) // 2
-button_y = 650
-button_width = 200
-button_height = 30
+list2 = [
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
+
+
 
 running = True
-while True:
+while running:
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         if ev.type == pygame.MOUSEBUTTONDOWN:
+            mouse = pygame.mouse.get_pos()
             if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
-                while(JEU_ACITF):   #ICI  boucle infini de fin du  jeu pour jeu  = 1 : mettre JEU_ACTIF = 0 dans une fonction pour quitter
-                    screen.fill(BLACK)
-                    flag_sqr(0,0)
-                    bomb_score()
-                    screen_grid(list)
-                    pygame.display.flip()
+                running = False
     screen.fill((60, 25, 60))
     mouse = pygame.mouse.get_pos()
     if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
         pygame.draw.rect(screen, BLUE, [button_x, button_y, button_width, button_height])
-        running = False
     else:
         pygame.draw.rect(screen, BLUE, [button_x, button_y, button_width, button_height])
-    screen.blit(text, (button_x + 50, button_y))
-    running = False
-
+    screen.blit(text, (button_x + 50, button_y + 5))
     show_instructions()
     pygame.display.flip()
 
+running = True
+while running:
+    for event in pygame.event.get():
+        screen.fill(BLACK)
 
-pygame.display.flip()
+        page_du_jeu()
+        score(vide)
+        screen_grid(vide,GR)
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            xi,yi = pygame.mouse.get_pos()
+            for line in range(9):
+                for col in range(9):
+                    case=case_n(col,line)
+                    if case.collidepoint(xi,yi):
+                        ''''
+                        verif=[1,2,3,4,5,6,7,8,'B','O']
+                        if vide == list2 :
+                            vide[line][col]=list1[line][col]
+                            if vide[line][col] not in verif:
+                                list1 = grid_list()
+                                vide = list2
+                        '''
+
+                        vide[line][col]=list1[line][col]
+                        if vide[line][col]=='B':
+                            running=False
+                            #screen.fill(BLACK)
+
+                        elif vide[line][col]==0:
+                            vide[line][col]='O'
+                            '''
+                            for i in range(3):
+                                for j in range(3):
+                                    if vide[col-1+i][line-1+j] == 0:
+                                        vide[col-i][line-j]='O'
+                            '''
+
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            xi,yi = pygame.mouse.get_pos()
+            for line in range(9):
+                for col in range(9):
+                    case=case_n(col,line)
+                    if case.collidepoint(xi,yi):
+                        if vide[line][col]==0:
+                            vide[line][col]='F'
+                        elif vide[line][col]=='F':
+                            vide[line][col]=0
 
 
+    pygame.display.flip()
 
+end_game(1)
 
+pygame.quit()
 
 
 
