@@ -162,11 +162,11 @@ def end_game(jeu):
     pygame.display.set_caption('Fin du Jeu')
     if jeu == False:
         fin_image = pygame.image.load('Screenshot_1.png')
-        fin_image = pygame.transform.scale(image, (larg, haut))
+        fin_image = pygame.transform.scale(fin_image, (larg, haut))
         fin_image_rect = fin_image.get_rect()
     else:
         fin_image = pygame.image.load('Screenshot_2.png')
-        fin_image = pygame.transform.scale(image, (larg, haut))
+        fin_image = pygame.transform.scale(fin_image, (larg, haut))
         fin_image_rect = fin_image.get_rect()
 
     fin_jeu = True
