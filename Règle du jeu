@@ -162,8 +162,6 @@ def score(list1):
     scr_rect = scr.get_rect(center=(389,65))
     screen.blit(scr,scr_rect)
 
-
-
 def case_n(lgn,cl):
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
@@ -217,6 +215,7 @@ def show_instructions():
         screen.blit(text, (20, y_offset))
         y_offset += 40
 
+
 #LINE ET NINA
 list1 = grid_list()
 vide=[
@@ -246,6 +245,7 @@ list2 = [
 running = True
 while running:
     for ev in pygame.event.get():
+
         if ev.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -319,11 +319,4 @@ while running:
 end_game(1)
 
 pygame.quit()
-
-
-
-
-
-
-
 
