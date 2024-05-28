@@ -1,24 +1,268 @@
 #demineur
 
 import pygame
-from pygame.locals import *
-
+import sys
+import random
+import math
+import time
 pygame.init()
-largeur = 400
-hauteur = 500
-taille_fenetre = (largeur , hauteur)
 
-screen = pygame.display.set_mode(taille_fenetre)
 
-font = pygame.image.load("ok.jpg")
-scale_font = pygame.transform.scale(font, taille_fenetre)
+largeur = 500
+hauteur = 600
+screen = pygame.display.set_mode((largeur, hauteur))
+pygame.display.set_caption("Game")
 
-game = True
-while game:
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			game = False
-	screen.blit(scale_font, (0, 0))
-	pygame.display.flip()
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (200, 200, 200)
+RED = (255, 0, 0)
+GR = (74, 74, 74)
+
+box = 9
+cellsize = (largeur-50) // box
+
+grid_list_=[
+ [0,0,0,0,0,0,0,1,1],
+ [1,1,0,0,0,0,1,2,'B'],
+ ['B',2,0,0,0,0,2,'B',3],
+ ['B',2,0,0,0,0,2,'B',2],
+ [1,2,1,0,0,0,1,1,1],
+ [1,2,'B',0,0,1,1,1,0],
+ ['B',2,1,1,1,2,'B',1,0],
+ [1,1,0,1,2,'B',2,1,0],
+ [0,0,0,1,'B',2,0,0,0]]
+
+vide=[
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
+def sqr(ligne,col,color):
+    #LINE
+    pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen,color,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
+
+def grid():
+    #LINE
+    for line in range(box):
+        for col in range(box):
+            rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
+
+def grid_list():
+    #LINE ET NINA
+    list1=[
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0]]
+    reccur=0
+    while reccur<10:
+        reccur=0
+        ln=random.randint(0,8)
+        rw=random.randint(0,8)
+        list1[rw][ln]='B'
+        for j in range(len(list1)):
+            reccur+=list1[j].count('B')
+    for i in range(len(list1)):
+        list1[i].insert(0,0)
+        list1[i].append(0)
+    list1.insert(0,[0,0,0,0,0,0,0,0,0,0,0])
+    list1.append([0,0,0,0,0,0,0,0,0,0,0])
+    for x in range(1,len(list1)-1):
+        for y in range(1,len(list1)-1):
+            if list1[y][x] != 'B':
+                num = 0
+                for k in range(3):
+                    for l in range(3):
+                        if list1[y-1+l][x-1+k] == 'B':
+                            num += 1
+                list1[y][x] = num
+    for a in range(len(list1)):
+        list1[a].pop(10)
+        list1[a].pop(0)
+    list1.pop(10)
+    list1.pop(0)
+    return list1
+
+def bomb_sqr(ligne,col):
+    #LINE
+    pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.circle(screen,RED, [50+50*ligne, 150+50*col], 15, 15)
+
+def flag_sqr(ligne,col):
+    #LINE
+    pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    pygame.draw.rect(screen, WHITE, (40+50*ligne, 130+50*col, 3, 40))
+    pygame.draw.polygon(screen, RED, [(40+ligne*50 + 3, 130+col*50), (40+ligne*50 + 25, 130+col*50 + 10), (40+ligne*50 + 3, 130+col*50 + 20)])
+
+def num_sqr(num,ligne,col,color):
+    #LINE
+    font_size = 50
+    font = pygame.font.SysFont(None, font_size)
+    pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
+    number_1 = font.render(num, True, color)
+    number_1_rect = number_1.get_rect(center=(50+50*ligne, 150+50*col))
+    screen.blit(number_1,number_1_rect)
+
+def screen_grid(list1,color):
+    #LINE
+    num=[1,2,3,4,5,6,7,8]
+    for line in range(9):
+        for row in range(9):
+            t=list1[row][line]
+            for i in range(len(num)):
+                if t not in num:
+                    if t==0: 
+                        sqr(line,row,color)
+                    elif t=='O':
+                        sqr(line,row,BLACK)
+                    elif t=='B':
+                        bomb_sqr(line,row)
+                    elif t=='F' :
+                        flag_sqr(line,row)
+                else:
+                    num_sqr(str(t),line,row,WHITE) 
+
+def score(list1):
+    #LINE
+    score=10
+    for line in range(len(list1)):
+        for row in range(len(list1)):
+            if list1[row][line]=='F':
+                score-=1
+    pygame.draw.rect(screen,WHITE,(300,25,175,75),1)
+    font_size = 90
+    font = pygame.font.SysFont(None, font_size)
+    scr = font.render(str(score), True, (171, 247, 186))
+    scr_rect = scr.get_rect(center=(389,65))
+    screen.blit(scr,scr_rect)
+
+
+
+def case_n(lgn,cl):
+    case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
+    return case
+
+def end_game(jeu):
+    #NINA
+    larg = 500
+    haut = 200
+    screen_end = pygame.display.set_mode((larg, haut))
+    pygame.display.set_caption('Fin du Jeu')
+    if jeu == False:
+        fin_image = pygame.image.load('Screenshot_1.png')
+        fin_image = pygame.transform.scale(image, (larg, haut))
+        fin_image_rect = fin_image.get_rect()
+    else:
+        fin_image = pygame.image.load('Screenshot_2.png')
+        fin_image = pygame.transform.scale(image, (larg, haut))
+        fin_image_rect = fin_image.get_rect()
+
+    fin_jeu = True
+    while fin_jeu:
+        for event in pygame.event.get():
+            screen_end.fill(BLACK)
+            screen.blit(fin_image, fin_image_rect)
+            if event.type == pygame.QUIT:
+                fin_jeu = False
+
+        pygame.display.flip()
+
+
+#LINE ET NINA
+list1 = grid_list()
+vide=[
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
+
+list2 = [
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0]]
+image = pygame.image.load('logo_noir.png')
+image = pygame.transform.scale(image, (275, 125))
+image_rect = image.get_rect(center = (150, 60))
+
+
+jeu = None
+running = True
+while running:      
+    for event in pygame.event.get():
+        screen.fill(BLACK)
+        screen.blit(image, image_rect.topleft)
+        score(vide) 
+        screen_grid(vide,GR)
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            xi,yi = pygame.mouse.get_pos()
+            for line in range(9):
+                for col in range(9):
+                    case = case_n(col,line)
+                    if case.collidepoint(xi,yi):
+                        verif=[1,2,3,4,5,6,7,8,'B','F']
+                        if vide == list2 :
+                            vide[line][col] = list1[line][col]
+                            if vide[line][col] not in verif:
+                                list1 = grid_list()
+                                vide = list2
+                        vide[line][col] = list1[line][col]
+                        if vide[line][col] == 'B':
+                            vide = list1
+                            #screen_grid(vide, BLACK)
+                            #time.sleep(10)
+                            jeu = False
+                            running = False
+                            #end_game(jeu)
+
+                        elif vide[line][col] == 0:
+                            vide[line][col] = 'O'
+                            '''
+                            for i in range(3):
+                                for j in range(3):
+                                    if vide[col-1+i][line-1+j] == 0:
+                                        vide[col-i][line-j] = 'O'
+                                        '''
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            xi,yi = pygame.mouse.get_pos()
+            for line in range(9):
+                for col in range(9):
+                    case=case_n(col,line)
+                    if case.collidepoint(xi,yi):
+                        if vide[line][col] == 0:
+                            vide[line][col] = 'F'
+                        elif vide[line][col] == 'F':
+                            vide[line][col] = 0
+                    
+
+    pygame.display.flip()
+
+end_game(jeu)
+#end_game(1)
 
 pygame.quit()
