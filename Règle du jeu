@@ -5,36 +5,32 @@ import math
 pygame.init()
 
 
-# Constants
-LARGEUR = 700
-HAUTEUR = 700
+largeur = 500
+hauteur = 600
+screen = pygame.display.set_mode((largeur, hauteur))
+pygame.display.set_caption("Game")
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
 RED = (255, 0, 0)
 GR = (74, 74, 74)
 BLUE = (0, 0, 255)
+
 box = 9
-cellsize = (LARGEUR - 50) // box
+cellsize = (largeur-50) // box
+
 font = pygame.font.Font(None, 25)
 
-#Bouton constante
 smallfont = pygame.font.SysFont('Corbel', 25)
 text = smallfont.render('Continuer', True, GRAY)
-button_x = (700 - 200) // 2
-button_y = 650
 button_width = 200
 button_height = 30
+button_x = (largeur) // 2 -  button_width //2
+button_y = hauteur - button_height -  75
 
 
-screen = pygame.display.set_mode((LARGEUR, HAUTEUR))
-pygame.display.set_caption("Règle du Jeu")
-
-def page_du_jeu():
-    largeur = 500
-    hauteur = 600
-    screen = pygame.display.set_mode((largeur, hauteur))
-    pygame.display.set_caption("Game")
+instruction = pygame.image.load('regle.jpg')
 
 grid_list_=[
  [0,0,0,0,0,0,0,1,1],
@@ -137,7 +133,7 @@ def screen_grid(list1,color):
             t=list1[row][line]
             for i in range(len(num)):
                 if t not in num:
-                    if t==0:
+                    if t==0: 
                         sqr(line,row,color)
                     if t=='O':
                         sqr(line,row,BLACK)
@@ -146,7 +142,7 @@ def screen_grid(list1,color):
                     elif t=='F' :
                         flag_sqr(line,row)
                 else:
-                    num_sqr(str(t),line,row,WHITE)
+                    num_sqr(str(t),line,row,WHITE) 
 
 def score(list1):
     #LINE
@@ -162,13 +158,37 @@ def score(list1):
     scr_rect = scr.get_rect(center=(389,65))
     screen.blit(scr,scr_rect)
 
+def show_instructions(instruction):
+    screen_end = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption('Règle du jeu')
+    size  = pygame.transform.scale(instruction,(largeur,hauteur))
+    screen.blit(size,(0,0))
+    border = pygame.Rect(button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, BLUE,border)
+    font_rect  = text.get_rect()
+    font_rect.center = border.center
+    screen.blit(text, font_rect)
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
+                    running = False
+  
+   
+
 def case_n(lgn,cl):
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
 
 def end_game(bombes):
     #NINA
-    ch = 'Vous avez fini le jeu',
+    ch = 'Vous avez fini le jeu', 
     'avec',bombes,'bombes.'
     larg = 500
     haut = 200
@@ -189,31 +209,6 @@ def end_game(bombes):
                 fin_jeu = False
 
         pygame.display.flip()
-
-def show_instructions():
-    instructions = [
-        "                                    Bienvenue dans le jeu de Démineur!",
-        "                                                      Règles du jeu:",
-        "Le but du jeu est de dévoiler toutes les cases du plateau sans toucher les",
-        "bombes, en plaçant des drapeaux sur les cases que l’on soupçonne d’être",
-        "des bombes. Lorsqu’on dévoile une case, le nombre de bombes dans un",
-        "périmètre de 8 cases autour est indiqué sur la case. Clic gauche pour",
-        "dévoiler une case, clic droit pour placer un drapeau.",
-        "Etapes :",
-        "       1.Trouver les bombes.",
-        "       2.Placer les drapeaux sur les bombes.",
-        "       3.Dévoiler toutes les cases du plateau sauf les bombes.",
-        "       4.Le nombre de bombes dans un périmètre de 8 cases",
-        "       est indiqué sur la case.",
-        "       5.Clique gauche pour dévoiler une caser.",
-        "       6.Clique droit pour mettre un drapeau"
-    ]
-    #screen.fill(BLACK)
-    y_offset = 10
-    for line in instructions:
-        text = font.render(line, True, WHITE)
-        screen.blit(text, (20, y_offset))
-        y_offset += 40
 
 
 #LINE ET NINA
@@ -239,37 +234,23 @@ list2 = [
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0]]
+image = pygame.image.load('logo_noir.jpg')
+image = pygame.transform.scale(image, (275, 125))
+image_rect = image.get_rect(center=(150, 60))
 
 
 
-running = True
-while running:
-    for ev in pygame.event.get():
 
-        if ev.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            mouse = pygame.mouse.get_pos()
-            if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
-                running = False
-    screen.fill((60, 25, 60))
-    mouse = pygame.mouse.get_pos()
-    if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
-        pygame.draw.rect(screen, BLUE, [button_x, button_y, button_width, button_height])
-    else:
-        pygame.draw.rect(screen, BLUE, [button_x, button_y, button_width, button_height])
-    screen.blit(text, (button_x + 50, button_y + 5))
-    show_instructions()
-    pygame.display.flip()
+
+show_instructions(instruction)   
+pygame.display.set_caption('Game') 
 
 running = True
-while running:
+while running:      
     for event in pygame.event.get():
         screen.fill(BLACK)
-
-        page_du_jeu()
-        score(vide)
+        screen.blit(image, image_rect.topleft)
+        score(vide) 
         screen_grid(vide,GR)
         if event.type == pygame.QUIT:
             running = False
@@ -301,7 +282,7 @@ while running:
                                     if vide[col-1+i][line-1+j] == 0:
                                         vide[col-i][line-j]='O'
                             '''
-
+        
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
@@ -312,11 +293,10 @@ while running:
                             vide[line][col]='F'
                         elif vide[line][col]=='F':
                             vide[line][col]=0
-
+                    
 
     pygame.display.flip()
 
 end_game(1)
 
 pygame.quit()
-
