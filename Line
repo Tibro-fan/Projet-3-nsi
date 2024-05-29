@@ -1,9 +1,10 @@
+#demineur
 import pygame
 import sys
 import random
 import math
+import time
 pygame.init()
-
 
 largeur = 500
 hauteur = 600
@@ -15,20 +16,10 @@ WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
 RED = (255, 0, 0)
 GR = (74, 74, 74)
+BLUE = (0, 0, 255)
 
 box = 9
 cellsize = (largeur-50) // box
-
-grid_list_=[
- [0,0,0,0,0,0,0,1,1],
- [1,1,0,0,0,0,1,2,'B'],
- ['B',2,0,0,0,0,2,'B',3],
- ['B',2,0,0,0,0,2,'B',2],
- [1,2,1,0,0,0,1,1,1],
- [1,2,'B',0,0,1,1,1,0],
- ['B',2,1,1,1,2,'B',1,0],
- [1,1,0,1,2,'B',2,1,0],
- [0,0,0,1,'B',2,0,0,0]]
 
 vide=[
 [0,0,0,0,0,0,0,0,0],
@@ -40,6 +31,20 @@ vide=[
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0]]
+
+font = pygame.font.Font(None, 25)
+
+smallfont = pygame.font.SysFont('Corbel', 25)
+text = smallfont.render('Continuer', True, GRAY)
+button_width = 200
+button_height = 30
+button_x = (largeur) // 2 -  button_width //2
+button_y = hauteur - button_height -  75
+
+
+instruction = pygame.image.load('regle.jpg')
+
+
 def sqr(ligne,col,color):
     #LINE
     pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
@@ -122,7 +127,7 @@ def screen_grid(list1,color):
                 if t not in num:
                     if t==0: 
                         sqr(line,row,color)
-                    if t=='O':
+                    elif t=='O':
                         sqr(line,row,BLACK)
                     elif t=='B':
                         bomb_sqr(line,row)
@@ -151,25 +156,51 @@ def case_n(lgn,cl):
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
 
-def end_game(bombes):
+
+def show_instructions(instruction):
+    #NOELIE
+    screen_end = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption('Règle du jeu')
+    size  = pygame.transform.scale(instruction,(largeur,hauteur))
+    screen.blit(size,(0,0))
+    border = pygame.Rect(button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, BLUE,border)
+    font_rect  = text.get_rect()
+    font_rect.center = border.center
+    screen.blit(text, font_rect)
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
+                    running = False
+
+
+def end_game(jeu):
     #NINA
-    ch = 'Vous avez fini le jeu', 
-    'avec',bombes,'bombes.'
     larg = 500
     haut = 200
     screen_end = pygame.display.set_mode((larg, haut))
     pygame.display.set_caption('Fin du Jeu')
+    if jeu == False:
+        fin_image = pygame.image.load('Screenshot_1.png')
+        fin_image = pygame.transform.scale(fin_image, (larg, haut))
+        fin_image_rect = fin_image.get_rect()
+    else:
+        fin_image = pygame.image.load('Screenshot_2.png')
+        fin_image = pygame.transform.scale(fin_image, (larg, haut))
+        fin_image_rect = fin_image.get_rect()
 
-    ch=str(ch)
     fin_jeu = True
     while fin_jeu:
         for event in pygame.event.get():
             screen_end.fill(BLACK)
-            font_size = 50
-            font = pygame.font.SysFont(None, font_size)
-            fin = font.render(ch, True, WHITE)
-            rect = fin.get_rect(center=(250,50))
-            screen.blit(fin,rect)
+            screen.blit(fin_image, fin_image_rect)
             if event.type == pygame.QUIT:
                 fin_jeu = False
 
@@ -201,46 +232,49 @@ list2 = [
 [0,0,0,0,0,0,0,0,0]]
 image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
-image_rect = image.get_rect(center=(150, 60))
+image_rect = image.get_rect(center = (150, 60))
 
+show_instructions(instruction)  
 
-running = True
-while running:      
+jeu = None
+game = True
+while game:      
     for event in pygame.event.get():
         screen.fill(BLACK)
         screen.blit(image, image_rect.topleft)
         score(vide) 
         screen_grid(vide,GR)
         if event.type == pygame.QUIT:
-            running = False
+            game = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
                 for col in range(9):
-                    case=case_n(col,line)
+                    case = case_n(col,line)
                     if case.collidepoint(xi,yi):
-                        ''''
-                        verif=[1,2,3,4,5,6,7,8,'B','O']
+                        verif=[1,2,3,4,5,6,7,8,'B','F']
                         if vide == list2 :
-                            vide[line][col]=list1[line][col]
+                            vide[line][col] = list1[line][col]
                             if vide[line][col] not in verif:
                                 list1 = grid_list()
                                 vide = list2
-                        '''
+                        vide[line][col] = list1[line][col]
+                        if vide[line][col] == 'B':
+                            vide = list1
+                            #screen_grid(vide, BLACK)
+                            #time.sleep(10)
+                            jeu = False
+                            game = False
+                            #end_game(jeu)
 
-                        vide[line][col]=list1[line][col]
-                        if vide[line][col]=='B':
-                            running=False
-                            #screen.fill(BLACK)
-
-                        elif vide[line][col]==0:
-                            vide[line][col]='O'
+                        if vide[line][col] == 0:
+                            vide[line][col] = 'O'
                             '''
                             for i in range(3):
                                 for j in range(3):
                                     if vide[col-1+i][line-1+j] == 0:
-                                        vide[col-i][line-j]='O'
-                            '''
+                                        vide[col-i][line-j] = 'O'
+                                        '''
         
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
@@ -248,14 +282,15 @@ while running:
                 for col in range(9):
                     case=case_n(col,line)
                     if case.collidepoint(xi,yi):
-                        if vide[line][col]==0:
-                            vide[line][col]='F'
-                        elif vide[line][col]=='F':
-                            vide[line][col]=0
+                        if vide[line][col] == 0:
+                            vide[line][col] = 'F'
+                        elif vide[line][col] == 'F':
+                            vide[line][col] = 0
                     
 
     pygame.display.flip()
 
-end_game(1)
+end_game(jeu)
+#end_game(1)
 
 pygame.quit()
