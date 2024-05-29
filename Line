@@ -150,8 +150,6 @@ def score(list1):
     scr_rect = scr.get_rect(center=(389,65))
     screen.blit(scr,scr_rect)
 
-
-
 def case_n(lgn,cl):
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
@@ -206,8 +204,6 @@ def end_game(jeu):
 
         pygame.display.flip()
 
-
-#LINE ET NINA
 list1 = grid_list()
 vide=[
 [0,0,0,0,0,0,0,0,0],
@@ -238,18 +234,21 @@ show_instructions(instruction)
 
 jeu = None
 game = True
-while game:      
+while game:    
+    #LINE  
     for event in pygame.event.get():
         screen.fill(BLACK)
         screen.blit(image, image_rect.topleft)
         score(vide) 
         screen_grid(vide,GR)
+        #NINA
         if event.type == pygame.QUIT:
             game = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
                 for col in range(9):
+                    #LINE
                     case = case_n(col,line)
                     if case.collidepoint(xi,yi):
                         verif=[1,2,3,4,5,6,7,8,'B','F']
@@ -259,6 +258,7 @@ while game:
                                 list1 = grid_list()
                                 vide = list2
                         vide[line][col] = list1[line][col]
+                        #NINA
                         if vide[line][col] == 'B':
                             vide = list1
                             #screen_grid(vide, BLACK)
@@ -266,7 +266,7 @@ while game:
                             jeu = False
                             game = False
                             #end_game(jeu)
-
+                        #LINE
                         if vide[line][col] == 0:
                             vide[line][col] = 'O'
                             '''
@@ -275,9 +275,10 @@ while game:
                                     if vide[col-1+i][line-1+j] == 0:
                                         vide[col-i][line-j] = 'O'
                                         '''
-        
+        #NINA
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
+            #LINE
             for line in range(9):
                 for col in range(9):
                     case=case_n(col,line)
