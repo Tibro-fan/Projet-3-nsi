@@ -236,6 +236,7 @@ image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
+#NOELIE
 font = pygame.font.Font(None, 25)
 smallfont = pygame.font.SysFont('Corbel', 25)
 text = smallfont.render('Continuer', True, GRAY)
@@ -243,7 +244,6 @@ button_width = 200
 button_height = 30
 button_x = (largeur) // 2 -  button_width // 2
 button_y = hauteur - button_height -  75
-#NOELIE
 screen_end = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption('Règle du jeu')
 size = pygame.transform.scale(instruction,(largeur,hauteur))
@@ -267,37 +267,41 @@ while running:
 
 
 jeu = None
-running = True
-while running:      
+game = True
+while game:      
     for event in pygame.event.get():
+        #LINE
         screen.fill(BLACK)
         screen.blit(image, image_rect.topleft)
         score(vide) 
         screen_grid(vide,GR)
+        #NINA
         if event.type == pygame.QUIT:
-            running = False
+            game = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             xi,yi = pygame.mouse.get_pos()
+            #LINE
             for line in range(9):
                 for col in range(9):
                     case = case_n(col,line)
                     if case.collidepoint(xi,yi):
                         verif=[1,2,3,4,5,6,7,8,'B','F']
+                        #NINA
                         if vide == list1 :
                             jeu = True
-                            #end_game(jeu)
-                            running = False
+                            game = False
+                        #LINE
                         elif vide == list2 :
                             vide[line][col] = list1[line][col]
                             if vide[line][col] not in verif:
                                 list1 = grid_list()
                                 vide = list2
                         vide[line][col] = list1[line][col]
+                        #NINA
                         if vide[line][col] == 'B':
                             vide = list1
                             jeu = False
-                            #end_game(jeu)
-                            running = False
+                            game = False
 
                         elif vide[line][col] == 0:
                             vide[line][col] = 'O'
@@ -307,7 +311,7 @@ while running:
                                     if vide[col-1+i][line-1+j] == 0:
                                         vide[col-i][line-j] = 'O'
                                         '''
-        
+        #LINE
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
