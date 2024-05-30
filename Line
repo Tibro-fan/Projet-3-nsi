@@ -166,8 +166,8 @@ def case_n(lgn,cl):
     return case
 
 def  emptycases(lgn, cl):
-    """fonction permettant de dévoiler les cases autour des cases vides"""
     #NOELIE
+    """ Cette fonction permet de dévoiler toutes les cases vides connectées et les numéros qui les entour"""
     for line in range(lgn-1,lgn+2):
         for row in range(cl-1, cl+2):
             if line>=0  and  line<len(vide) and row>=0  and  row<len(vide) :
@@ -183,6 +183,7 @@ def  emptycases(lgn, cl):
 
 def show_instructions(instruction):
     #NOELIE
+    """Cette fonction permet d'afficher une page avec les règles du jeu puis ajoute un bouton qui permet de lancer la page de jeu"""
     screen_end = pygame.display.set_mode((largeur, hauteur))
     pygame.display.set_caption('Règle du jeu')
     size  = pygame.transform.scale(instruction,(largeur,hauteur))
@@ -203,6 +204,7 @@ def show_instructions(instruction):
                 mouse = pygame.mouse.get_pos()
                 if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
                     running = False
+
 
 
 def end_game(jeu):
