@@ -46,17 +46,20 @@ instruction = pygame.image.load('regle.jpg')
 
 
 def sqr(ligne,col,color):
+    """fonction qui permet d'afficher un carré de contour blanc et rempli dans une couleur donnée"""
     #LINE
     pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.rect(screen,color,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
 
 def grid():
+    """fonction qui permet d'afficher une grille constituée de carrés blancs"""
     #LINE
     for line in range(box):
         for col in range(box):
             rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
 
 def grid_list():
+    """fonction qui permet de générer une liste qui pose des bombes aléatoirement et indique le nombre de bombes autour"""
     #LINE ET NINA
     list1=[
     [0,0,0,0,0,0,0,0,0],
@@ -98,17 +101,20 @@ def grid_list():
     return list1
 
 def bomb_sqr(ligne,col):
+    """fonction permettant d'afficher un carré (au bord blanc) avec un rond rouge"""
     #LINE
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.circle(screen,RED, [50+50*ligne, 150+50*col], 15, 15)
 
 def flag_sqr(ligne,col):
+    """fonction permettant d'afficher un carré avec un drapeau"""
     #LINE
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.rect(screen, WHITE, (40+50*ligne, 130+50*col, 3, 40))
     pygame.draw.polygon(screen, RED, [(40+ligne*50 + 3, 130+col*50), (40+ligne*50 + 25, 130+col*50 + 10), (40+ligne*50 + 3, 130+col*50 + 20)])
 
 def num_sqr(num,ligne,col,color):
+    """fonction permettant d'afficher avec un carré choisi"""
     #LINE
     font_size = 50
     font = pygame.font.SysFont(None, font_size)
@@ -118,6 +124,7 @@ def num_sqr(num,ligne,col,color):
     screen.blit(number_1,number_1_rect)
 
 def screen_grid(list1,color):
+    """fonction permettant d'afficher une grille sur l'écran à partir d'une liste"""
     #LINE
     num=[1,2,3,4,5,6,7,8]
     for line in range(9):
@@ -137,6 +144,7 @@ def screen_grid(list1,color):
                     num_sqr(str(t),line,row,WHITE) 
 
 def score(list1):
+    """fonction permettant d'afficher le décompte de nombres à partir de 10 et un cadre autour"""
     #LINE
     score=10
     for line in range(len(list1)):
@@ -153,10 +161,12 @@ def score(list1):
 
 
 def case_n(lgn,cl):
+    """fonction permettant de définir des cases à partir de la ligne et de la colonne"""
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
 
 def  emptycases(lgn, cl):
+    """fonction permettant de dévoiler les cases autour des cases vides"""
     #NOELIE
     for line in range(lgn-1,lgn+2):
         for row in range(cl-1, cl+2):
