@@ -34,7 +34,7 @@ vide=[
 
 font = pygame.font.Font(None, 25)
 
-smallfont = pygame.font.SysFont('Corbel', 25)
+smallfont = pygame.font.SysFont('Nunito', 25)
 text = smallfont.render('Continuer', True, GRAY)
 button_width = 200
 button_height = 30
