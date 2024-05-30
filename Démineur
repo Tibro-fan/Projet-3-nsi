@@ -170,6 +170,7 @@ def case_n(lgn,cl):
 
 def  emptycases(lgn, cl):
     #NOELIE
+    """ Cette fonction permet de dévoiler toutes les cases vides connectées et les numéros autour des cases vide."""
     for line in range(lgn-1,lgn+2):
         for row in range(cl-1, cl+2):
             if line>=0  and  line<len(vide) and row>=0  and  row<len(vide) :
@@ -179,6 +180,33 @@ def  emptycases(lgn, cl):
                         emptycases(line,row)
                     elif list1[line][row] in [1,2,3,4,5,6,7,8]:
                         vide[line][row] = list1[line][row] 
+
+
+            
+
+def show_instructions(instruction):
+    #NOELIE
+    """Cette fonction permet d'afficher une page avec les règles du jeu puis ajoute un bouton qui permet de lancer la page de jeu"""
+    screen_end = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption('Règle du jeu')
+    size  = pygame.transform.scale(instruction,(largeur,hauteur))
+    screen.blit(size,(0,0))
+    border = pygame.Rect(button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, BLUE,border)
+    font_rect  = text.get_rect()
+    font_rect.center = border.center
+    screen.blit(text, font_rect)
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
+                    running = False
 
 def end_game(jeu):
     #NINA
@@ -245,34 +273,7 @@ image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
-#NOELIE
-font = pygame.font.Font(None, 25)
-smallfont = pygame.font.SysFont('Nunito', 25)
-text = smallfont.render('Continuer', True, GRAY)
-button_width = 200
-button_height = 30
-button_x = (largeur) // 2 -  button_width // 2
-button_y = hauteur - button_height -  75
-screen_end = pygame.display.set_mode((largeur, hauteur))
-pygame.display.set_caption('Règle du jeu')
-size = pygame.transform.scale(instruction,(largeur,hauteur))
-screen.blit(size,(0,0))
-border = pygame.Rect(button_x, button_y, button_width, button_height)
-pygame.draw.rect(screen, BLUE, border)
-font_rect = text.get_rect()
-font_rect.center = border.center
-screen.blit(text, font_rect)
-pygame.display.flip()
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse = pygame.mouse.get_pos()
-            if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
-                running = False
+show_instructions()
 
 
 jeu = None
