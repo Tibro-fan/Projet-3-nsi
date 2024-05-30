@@ -150,9 +150,50 @@ def score(list1):
     scr_rect = scr.get_rect(center=(389,65))
     screen.blit(scr,scr_rect)
 
+
+
 def case_n(lgn,cl):
     case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
+
+def  emptycases(lgn, cl):
+    #NOELIE
+    for line in range(lgn-1,lgn+2):
+        for row in range(cl-1, cl+2):
+            if line>=0  and  line<len(vide) and row>=0  and  row<len(vide) :
+                if vide[line][row] == 0:
+                    if(list1[line][row]==0):
+                        vide[line][row] = 'O'
+                        emptycases(line,row)
+                    elif list1[line][row] in [1,2,3,4,5,6,7,8]:
+                        vide[line][row] = list1[line][row] 
+
+
+            
+
+def show_instructions(instruction):
+    #NOELIE
+    screen_end = pygame.display.set_mode((largeur, hauteur))
+    pygame.display.set_caption('Règle du jeu')
+    size  = pygame.transform.scale(instruction,(largeur,hauteur))
+    screen.blit(size,(0,0))
+    border = pygame.Rect(button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, BLUE,border)
+    font_rect  = text.get_rect()
+    font_rect.center = border.center
+    screen.blit(text, font_rect)
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
+                    running = False
+
 
 def end_game(jeu):
     #NINA
@@ -179,6 +220,8 @@ def end_game(jeu):
 
         pygame.display.flip()
 
+
+#LINE ET NINA
 list1 = grid_list()
 vide=[
 [0,0,0,0,0,0,0,0,0],
@@ -205,39 +248,12 @@ image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
-font = pygame.font.Font(None, 25)
-smallfont = pygame.font.SysFont('Corbel', 25)
-text = smallfont.render('Continuer', True, GRAY)
-button_width = 200
-button_height = 30
-button_x = (largeur) // 2 -  button_width //2
-button_y = hauteur - button_height -  75
-    #NOELIE
-    screen_end = pygame.display.set_mode((largeur, hauteur))
-    pygame.display.set_caption('Règle du jeu')
-    size  = pygame.transform.scale(instruction,(largeur,hauteur))
-    screen.blit(size,(0,0))
-    border = pygame.Rect(button_x, button_y, button_width, button_height)
-    pygame.draw.rect(screen, BLUE,border)
-    font_rect  = text.get_rect()
-    font_rect.center = border.center
-    screen.blit(text, font_rect)
-    pygame.display.flip()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse = pygame.mouse.get_pos()
-                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
-                    running = False
+show_instructions(instruction)  
 
 jeu = None
 game = True
-while game:    
-    #LINE  
+while game:
+    #LINE      
     for event in pygame.event.get():
         screen.fill(BLACK)
         screen.blit(image, image_rect.topleft)
@@ -259,28 +275,22 @@ while game:
                             if vide[line][col] not in verif:
                                 list1 = grid_list()
                                 vide = list2
-                        vide[line][col] = list1[line][col]
                         #NINA
+                        vide[line][col] = list1[line][col]
                         if vide[line][col] == 'B':
                             vide = list1
-                            #screen_grid(vide, BLACK)
-                            #time.sleep(10)
                             jeu = False
+                            end_game(jeu)
                             game = False
-                            #end_game(jeu)
+
                         #LINE
                         if vide[line][col] == 0:
                             vide[line][col] = 'O'
-                            '''
-                            for i in range(3):
-                                for j in range(3):
-                                    if vide[col-1+i][line-1+j] == 0:
-                                        vide[col-i][line-j] = 'O'
-                                        '''
-        #NINA
+                            emptycases(line,col)
+        
+        #LINE
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
-            #LINE
             for line in range(9):
                 for col in range(9):
                     case=case_n(col,line)
@@ -292,8 +302,5 @@ while game:
                     
 
     pygame.display.flip()
-
-end_game(jeu)
-#end_game(1)
 
 pygame.quit()
