@@ -6,8 +6,7 @@ import random
 import math
 import time
 pygame.init()
-
-
+ 
 largeur = 500
 hauteur = 600
 screen = pygame.display.set_mode((largeur, hauteur))
@@ -19,33 +18,9 @@ GRAY = (200, 200, 200)
 RED = (255, 0, 0)
 GR = (74, 74, 74)
 BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
 
 box = 9
 cellsize = (largeur-50) // box
-
-font = pygame.font.Font(None, 25)
-
-smallfont = pygame.font.SysFont('Corbel', 25)
-text = smallfont.render('Continuer', True, GRAY)
-button_width = 200
-button_height = 30
-button_x = (largeur) // 2 -  button_width //2
-button_y = hauteur - button_height -  75
-
-
-instruction = pygame.image.load('regle.jpg')
-
-grid_list_=[
- [0,0,0,0,0,0,0,1,1],
- [1,1,0,0,0,0,1,2,'B'],
- ['B',2,0,0,0,0,2,'B',3],
- ['B',2,0,0,0,0,2,'B',2],
- [1,2,1,0,0,0,1,1,1],
- [1,2,'B',0,0,1,1,1,0],
- ['B',2,1,1,1,2,'B',1,0],
- [1,1,0,1,2,'B',2,1,0],
- [0,0,0,1,'B',2,0,0,0]]
 
 vide=[
 [0,0,0,0,0,0,0,0,0],
@@ -57,19 +32,36 @@ vide=[
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0]]
+
+font = pygame.font.Font(None, 25)
+
+smallfont = pygame.font.SysFont('Nunito', 25)
+text = smallfont.render('Continuer', True, GRAY)
+button_width = 200
+button_height = 30
+button_x = (largeur) // 2 -  button_width //2
+button_y = hauteur - button_height -  75
+
+
+instruction = pygame.image.load('regle.jpg')
+
+
 def sqr(ligne,col,color):
+    """fonction qui permet d'afficher un carré de contour blanc et rempli dans une couleur donnée"""
     #LINE
     pygame.draw.rect(screen,WHITE,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.rect(screen,color,((25+50*ligne)+1,(125+50*col)+1,48,48),40)
 
 def grid():
+    """fonction qui permet d'afficher une grille constituée de carrés blancs"""
     #LINE
     for line in range(box):
         for col in range(box):
             rectangle=pygame.draw.rect(screen,WHITE,((25+line*50),(125+col*50),cellsize,cellsize),1)
 
 def grid_list():
-    #LINE ET NINA
+    """fonction qui permet de générer une liste qui pose des bombes aléatoirement et indique le nombre de bombes autour"""
+    #LINE
     list1=[
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -88,6 +80,7 @@ def grid_list():
         list1[rw][ln]='B'
         for j in range(len(list1)):
             reccur+=list1[j].count('B')
+    #NINA
     for i in range(len(list1)):
         list1[i].insert(0,0)
         list1[i].append(0)
@@ -110,17 +103,20 @@ def grid_list():
     return list1
 
 def bomb_sqr(ligne,col):
+    """fonction permettant d'afficher un carré (au bord blanc) avec un rond rouge"""
     #LINE
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.circle(screen,RED, [50+50*ligne, 150+50*col], 15, 15)
 
 def flag_sqr(ligne,col):
+    """fonction permettant d'afficher un carré avec un drapeau"""
     #LINE
     pygame.draw.rect(screen,RED,((25+50*ligne),(125+50*col),cellsize,cellsize),1)
     pygame.draw.rect(screen, WHITE, (40+50*ligne, 130+50*col, 3, 40))
     pygame.draw.polygon(screen, RED, [(40+ligne*50 + 3, 130+col*50), (40+ligne*50 + 25, 130+col*50 + 10), (40+ligne*50 + 3, 130+col*50 + 20)])
 
 def num_sqr(num,ligne,col,color):
+    """fonction permettant d'afficher avec un carré choisi"""
     #LINE
     font_size = 50
     font = pygame.font.SysFont(None, font_size)
@@ -130,6 +126,7 @@ def num_sqr(num,ligne,col,color):
     screen.blit(number_1,number_1_rect)
 
 def screen_grid(list1,color):
+    """fonction permettant d'afficher une grille sur l'écran à partir d'une liste"""
     #LINE
     num=[1,2,3,4,5,6,7,8]
     for line in range(9):
@@ -149,6 +146,7 @@ def screen_grid(list1,color):
                     num_sqr(str(t),line,row,WHITE) 
 
 def score(list1):
+    """fonction permettant d'afficher le décompte de nombres à partir de 10 et un cadre autour"""
     #LINE
     score=10
     for line in range(len(list1)):
@@ -165,12 +163,13 @@ def score(list1):
 
 
 def case_n(lgn,cl):
-    case = pygame.Rect(25+50*lgn,125+50*cl,50,50)
+    """fonction permettant de définir des cases à partir de la ligne et de la colonne"""
+    case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
 
 def  emptycases(lgn, cl):
-    #NOELIE
     """ Cette fonction permet de dévoiler toutes les cases vides connectées et les numéros autour des cases vide."""
+    #NOELIE
     for line in range(lgn-1,lgn+2):
         for row in range(cl-1, cl+2):
             if line>=0  and  line<len(vide) and row>=0  and  row<len(vide) :
@@ -185,8 +184,8 @@ def  emptycases(lgn, cl):
             
 
 def show_instructions(instruction):
-    #NOELIE
     """Cette fonction permet d'afficher une page avec les règles du jeu puis ajoute un bouton qui permet de lancer la page de jeu"""
+    #NOELIE
     screen_end = pygame.display.set_mode((largeur, hauteur))
     pygame.display.set_caption('Règle du jeu')
     size  = pygame.transform.scale(instruction,(largeur,hauteur))
@@ -208,9 +207,10 @@ def show_instructions(instruction):
                 if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
                     running = False
 
+
 def end_game(jeu):
-    #NINA
     '''fonction qui permet d'afficher l'écran de fin du jeu en fonction de la réussite ou de l'échec du joueur.'''
+    #NINA
     larg = 500
     haut = 600
     screen_end = pygame.display.set_mode((larg, haut))
@@ -221,34 +221,33 @@ def end_game(jeu):
     else:
         fin_image = pygame.image.load('Screenshot_2.png') #Enregistre l'image pour la réussite
         fin_image_rect = fin_image.get_rect(center = (250, 250))
-    font_button = pygame.font.SysFont('Nunito', 25)
+    font_button = pygame.font.SysFont('Nunito', 50)
     text_button = font_button.render('Rejouer', True, WHITE)
-    button = pygame.Rect(100, 50, 250, 300)
-    pygame.draw.rect(screen, WHITE, button, 1)
+    button = pygame.Rect(125, 400, 250, 50) #Créer le bouton avec la bonne taille
     font_button_rect = text_button.get_rect()
-    font_button_rect.center = border.center
+    font_button_rect.center = button.center
 
     fin_jeu = True
     while fin_jeu:
         for event in pygame.event.get():
-            screen_end.fill(BLACK)
-            screen.blit(fin_image, fin_image_rect)
-            screen.blit(text_button, font_button_rect)
+            screen_end.fill(BLACK) #Affiche un fond noir
+            screen.blit(fin_image, fin_image_rect) #Affiche l'image de fin
+            screen.blit(text_button, font_button_rect) #Affichee le bouton
+            pygame.draw.rect(screen, WHITE, button, 1)
             if event.type == pygame.QUIT:
                 pygame.quit
                 sys.exit
                 fin_jeu = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 xi,yi = pygame.mouse.get_pos()
-                if button.collidepoint(xi,yi):
+                if button.collidepoint(xi,yi): #Vérifie si le joueur a cliqué sur le bouton
                     fin_jeu = False
-
         pygame.display.flip()
 
 
 #LINE ET NINA
 list1 = grid_list()
-vide=[
+vide = [
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0],
@@ -259,22 +258,11 @@ vide=[
 [0,0,0,0,0,0,0,0,0],
 [0,0,0,0,0,0,0,0,0]]
 
-list2 = [
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0]]
 image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
-show_instructions()
-
+show_instructions(instruction)  
 
 jeu = None
 game = True
@@ -286,24 +274,15 @@ while game:
         score(vide) 
         screen_grid(vide,GR)
         #NINA
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT: #Vérifie si le joueur quitte la fenêtre
             game = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Vérifie si le joueur fait un clqie gauche
             xi,yi = pygame.mouse.get_pos()
             #LINE
             for line in range(9):
                 for col in range(9):
                     case = case_n(col,line)
                     if case.collidepoint(xi,yi):
-                        verif = [1,2,3,4,5,6,7,8,'B','F']
-                        if vide == list2 :
-                            '''
-                            if vide[line][col] not in verif:
-                                list1 = grid_list()
-                                vide = list2
-                            else:
-                                '''
-                            vide[line][col] = list1[line][col]
                         vide[line][col] = list1[line][col]
                         #NINA
                         if vide == list1 :
@@ -322,7 +301,7 @@ while game:
                             emptycases(line, col)
                             
         #LINE
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3: #Vérifie si le joueur a fait un clique un clique droit
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
                 for col in range(9):
