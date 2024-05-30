@@ -165,29 +165,38 @@ def score(list1):
 
 
 def case_n(lgn,cl):
-    case=pygame.Rect(25+50*lgn,125+50*cl,50,50)
+    case = pygame.Rect(25+50*lgn,125+50*cl,50,50)
     return case
+
+def  emptycases(lgn, cl):
+    #NOELIE
+    for line in range(lgn-1,lgn+2):
+        for row in range(cl-1, cl+2):
+            if line>=0  and  line<len(vide) and row>=0  and  row<len(vide) :
+                if vide[line][row] == 0:
+                    if(list1[line][row]==0):
+                        vide[line][row] = 'O'
+                        emptycases(line,row)
+                    elif list1[line][row] in [1,2,3,4,5,6,7,8]:
+                        vide[line][row] = list1[line][row] 
 
 def end_game(jeu):
     #NINA
+    '''fonction qui permet d'afficher l'écran de fin du jeu en fonction de la réussite ou de l'échec du joueur.'''
     larg = 500
     haut = 600
     screen_end = pygame.display.set_mode((larg, haut))
     pygame.display.set_caption('Fin du Jeu')
     if jeu == False:
-        fin_image = pygame.image.load('Screenshot_1.png')
+        fin_image = pygame.image.load('Screenshot_1.png') #Enregistre l'image pour l'échec
         fin_image_rect = fin_image.get_rect(center = (250, 250))
     else:
-        fin_image = pygame.image.load('Screenshot_2.png')
+        fin_image = pygame.image.load('Screenshot_2.png') #Enregistre l'image pour la réussite
         fin_image_rect = fin_image.get_rect(center = (250, 250))
-    font_button = pygame.font.SysFont('Corbel', 25)
+    font_button = pygame.font.SysFont('Nunito', 25)
     text_button = font_button.render('Rejouer', True, WHITE)
-    button_width = 200
-    button_height = 30
-    button_x = largeur // 2 -  button_width // 2
-    button_y = hauteur - button_height -  75
-    border = pygame.Rect(button_x, button_y, button_width, button_height)
-    pygame.draw.rect(screen, WHITE, border)
+    button = pygame.Rect(100, 50, 250, 300)
+    pygame.draw.rect(screen, WHITE, button, 1)
     font_button_rect = text_button.get_rect()
     font_button_rect.center = border.center
 
@@ -202,8 +211,8 @@ def end_game(jeu):
                 sys.exit
                 fin_jeu = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse = pygame.mouse.get_pos()
-                if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
+                xi,yi = pygame.mouse.get_pos()
+                if button.collidepoint(xi,yi):
                     fin_jeu = False
 
         pygame.display.flip()
@@ -236,10 +245,9 @@ image = pygame.image.load('logo_noir.png')
 image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
-def show_instructions():
 #NOELIE
 font = pygame.font.Font(None, 25)
-smallfont = pygame.font.SysFont('Corbel', 25)
+smallfont = pygame.font.SysFont('Nunito', 25)
 text = smallfont.render('Continuer', True, GRAY)
 button_width = 200
 button_height = 30
@@ -266,8 +274,6 @@ while running:
             if button_x <= mouse[0] <= button_x + button_width and button_y <= mouse[1] <= button_y + button_height:
                 running = False
 
-show_instructions()
-pygame.display.set_caption("Game")
 
 jeu = None
 game = True
@@ -288,38 +294,38 @@ while game:
                 for col in range(9):
                     case = case_n(col,line)
                     if case.collidepoint(xi,yi):
-                        verif=[1,2,3,4,5,6,7,8,'B','F']
-                        #NINA
-                        if vide == list1 :
-                            jeu = True
-                            game = False
-                        #LINE
-                        elif vide == list2 :
-                            vide[line][col] = list1[line][col]
+                        verif = [1,2,3,4,5,6,7,8,'B','F']
+                        if vide == list2 :
+                            '''
                             if vide[line][col] not in verif:
                                 list1 = grid_list()
                                 vide = list2
+                            else:
+                                '''
+                            vide[line][col] = list1[line][col]
                         vide[line][col] = list1[line][col]
                         #NINA
-                        if vide[line][col] == 'B':
+                        if vide == list1 :
+                            jeu = True
+                            end_game(jeu)
+                            game = False
+                        
+                        elif vide[line][col] == 'B':
                             vide = list1
                             jeu = False
+                            end_game(jeu)
                             game = False
 
                         elif vide[line][col] == 0:
                             vide[line][col] = 'O'
-                            '''
-                            for i in range(3):
-                                for j in range(3):
-                                    if vide[col-1+i][line-1+j] == 0:
-                                        vide[col-i][line-j] = 'O'
-                                        '''
+                            emptycases(line, col)
+                            
         #LINE
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             xi,yi = pygame.mouse.get_pos()
             for line in range(9):
                 for col in range(9):
-                    case=case_n(col,line)
+                    case = case_n(col,line)
                     if case.collidepoint(xi,yi):
                         if vide[line][col] == 0:
                             vide[line][col] = 'F'
@@ -328,7 +334,5 @@ while game:
                     
 
     pygame.display.flip()
-
-end_game(jeu)
 
 pygame.quit()
