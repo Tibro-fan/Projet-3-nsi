@@ -261,6 +261,7 @@ image = pygame.transform.scale(image, (275, 125))
 image_rect = image.get_rect(center = (150, 60))
 
 show_instructions(instruction)  
+pygame.display.set_caption("Game") 
 
 jeu = None
 game = True
