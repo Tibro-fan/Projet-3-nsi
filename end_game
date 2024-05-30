@@ -1,0 +1,35 @@
+def end_game(jeu):
+    '''fonction qui permet d'afficher l'écran de fin du jeu en fonction de la réussite ou de l'échec du joueur.'''
+    #NINA
+    larg = 500
+    haut = 600
+    screen_end = pygame.display.set_mode((larg, haut))
+    pygame.display.set_caption('Fin du Jeu')
+    if jeu == False:
+        fin_image = pygame.image.load('Screenshot_1.png') #Enregistre l'image pour l'échec
+        fin_image_rect = fin_image.get_rect(center = (250, 250))
+    else:
+        fin_image = pygame.image.load('Screenshot_2.png') #Enregistre l'image pour la réussite
+        fin_image_rect = fin_image.get_rect(center = (250, 250))
+    font_button = pygame.font.SysFont('Nunito', 50)
+    text_button = font_button.render('Rejouer', True, WHITE)
+    button = pygame.Rect(125, 400, 250, 50) #Créer le bouton avec la bonne taille
+    font_button_rect = text_button.get_rect()
+    font_button_rect.center = button.center
+
+    fin_jeu = True
+    while fin_jeu:
+        for event in pygame.event.get():
+            screen_end.fill(BLACK) #Affiche un fond noir
+            screen.blit(fin_image, fin_image_rect) #Affiche l'image de fin
+            screen.blit(text_button, font_button_rect) #Affichee le bouton
+            pygame.draw.rect(screen, WHITE, button, 1)
+            if event.type == pygame.QUIT:
+                pygame.quit
+                sys.exit
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                xi,yi = pygame.mouse.get_pos()
+                if button.collidepoint(xi,yi): #Vérifie si le joueur a cliqué sur le bouton
+                    rejouer = True
+        return rejouer
+        pygame.display.flip()
